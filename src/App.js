@@ -18,6 +18,7 @@ import Analytics from "./pages/Analytics";
 import ContactUs from "./pages/ContactUs";
 import ForgotPassword from "./pages/ForgotPassword";
 import ChangePassword from "./pages/ChangePassword";
+import FilesInsideFolder from "./components/FilesInsideFolder";
 // import secureLocalStorage from "react-secure-storage";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -26,6 +27,7 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import ErrorPage from "./components/ErrorPage";
 import TextEditor from "./components/editFiles/TextEditor";
 import TextEditorV2 from "./components/editFiles/TextEditorV2";
+import CustomEditor from "./components/customEditor/CustomEditorV1";
 // import { useDarkMode } from "./context/darkModeContext";
 
 // let hardCodedDepartments = [
@@ -66,6 +68,10 @@ const App = () => {
               <Route path="/user-management" element={<UserManagement />} />
               <Route path="/department/:deptName" element={<Department />} />
               <Route path="/user-profile/:userId" element={<UserProfile />} />
+              <Route
+                path="/filesInsideFolder/:folderName/:folderId"
+                element={<FilesInsideFolder />}
+              />
               <Route path="/profile" element={<Profile />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/analytics" element={<Analytics />} />
@@ -76,6 +82,7 @@ const App = () => {
               {/* for editor testing */}
               <Route path="/edit" element={<TextEditor />} />
               {/* <Route path="/edit" element={<TextEditorV2 />} /> */}
+              <Route path="/editcustom" element={<CustomEditor />} />
             </Route>
             {/* Public Routes should go below */}
 

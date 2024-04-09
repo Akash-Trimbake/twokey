@@ -50,6 +50,9 @@ const FileExtractorFromSupabase = () => {
     }
   };
 
+  let wordFileUrl =
+    "https://cderhtrlfxroiyqqzytr.supabase.co/storage/v1/object/sign/TwoKey/experiment%203.docx_TS=1712336462947?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJUd29LZXkvZXhwZXJpbWVudCAzLmRvY3hfVFM9MTcxMjMzNjQ2Mjk0NyIsImlhdCI6MTcxMjQwMTkwMCwiZXhwIjoxNzEzMDA2NzAwfQ.ZDEl0x1T1ZnzExiPniDHngB3HAdbA7JEsuDKevWLttg&t=2024-04-06T11%3A11%3A40.400Z";
+
   return (
     <div>
       <input type="text" value={url} onChange={handleUrlChange} />
@@ -60,6 +63,8 @@ const FileExtractorFromSupabase = () => {
         <h2>Extracted Text:</h2>
         <pre>{loading ? "Loading..." : result}</pre>
       </div>
+
+      <TextEditor preUrl={wordFileUrl} />
     </div>
   );
 };
