@@ -27,8 +27,6 @@ const ForgotPassword = () => {
     }
   };
 
-  // style={{backgroundImage:`url(${ForgotPasswordBackGroundImage})`}}
-
   return (
     <div
       className="bg-cover bg-[#FFFFFF]  rounded-md  " >
@@ -37,7 +35,7 @@ const ForgotPassword = () => {
             <img className="opacity-50  md:w-[80%] w-[100%]" src={ForgotPasswordImage} alt="" />
         </div>
 
-        <div className="sm:w-1/2 mt-6">
+        <div className="md:w-1/2 mt-6">
           <form className="rounded-md md:flex ">
             <div
               className=" px-4  md:px-12 bg-[#FFFF] p-4 rounded-md 
@@ -84,16 +82,12 @@ const ForgotPassword = () => {
               ) : (
                 <button
                   onClick={sendPasswordResetRequest}
-                  className="w-full m-auto bg-blue-600 text-white py-1 px-10 text-center mt-8  md:mt-12 rounded-sm hover:bg-blue-500"
+                  className="w-full m-auto bg-blue-600 text-white py-1 px-10 text-center mt-8  md:mt-14 rounded-sm hover:bg-blue-500"
                 >
                   <span className="font-semibold">Send</span>
                 </button>
               )}
               <div className="text-center text-[12px] p-2 text-gray-500 ">
-                <p>
-                  Didn't recieve code?{" "}
-                  <span className="text-blue-900 underline">Resend </span>{" "}
-                </p>
               </div>
             </div>
           </form>
