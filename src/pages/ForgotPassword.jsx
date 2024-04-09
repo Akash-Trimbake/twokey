@@ -34,14 +34,14 @@ const ForgotPassword = () => {
       className="bg-cover bg-[#FFFFFF]  rounded-md  " >
       <section className="md:flex  m-auto md:w-[70%] md:mt-12 md:py-12 md:border-y-2 md:border-t-transparent ">
         <div className=" items-center flex justify-end ">
-            <img className="opacity-50  md:w-[80%] " src={ForgotPasswordImage} alt="" />
+            <img className="opacity-50  md:w-[80%] w-[100%]" src={ForgotPasswordImage} alt="" />
         </div>
 
-        <div className="md:w-1/2 mt-6">
+        <div className="sm:w-1/2 mt-6">
           <form className="rounded-md md:flex ">
             <div
-              className=" px-4 md:px-12 bg-[#FFFF] p-4 rounded-md 
-        flex flex-col border-y-2 w-full  bg-slate-50"
+              className=" px-4  md:px-12 bg-[#FFFF] p-4 rounded-md 
+        flex flex-col border-y-2 sm:w-full  bg-slate-50"
             >
               <div>
                 <p className="text-3xl md:text-4xl text-black  font-bold">
