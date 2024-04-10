@@ -19,6 +19,7 @@ import Analytics from "../assets/Analytics.svg";
 import UserMgmt from "../assets/userMgmt.svg";
 import { useAuth } from "../context/authContext";
 import secureLocalStorage from "react-secure-storage";
+import CloseIcon from "@mui/icons-material/Close";
 
 let hardCodedDepartments = [
   { name: "Account", metadata: { bg: "#FFF6F6", border: "#FEB7B7" } },
@@ -92,7 +93,7 @@ function SideBar() {
   const lightModeSidebarColor = "[#f7f7ff]";
   return (
     <nav
-      className={`min-h-[100%] ${
+      className={`min-h-full ${
         darkMode ? "bg-gray-800" : `bg-${lightModeSidebarColor}`
       } `}
     >
@@ -126,25 +127,20 @@ function SideBar() {
         sx={{
           display: { md: "none", xs: "block" },
           borderBottom: 2,
-          minHeight: "100%",
-
           "& .MuiDrawer-paper": {
-            backgroundColor: `${darkMode ? "#1f2937" : "white"}`,
+            backgroundColor: `${darkMode ? "black" : "red"}`,
             minHeight: "100%",
           },
         }}
       >
+        {/* the main background css to be changed */}
         <nav
-          className={`sm-width md-width px-2 h-screen  ${
-            darkMode ? "bg-gray-800" : `bg-${lightModeSidebarColor}`
-          } `}
+          className={`sm-width md-width px-2  ${
+            darkMode ? "bg-black" : `bg-${lightModeSidebarColor}`
+          } h-auto`}
         >
           <div className="w-full">
-            <div
-              className={`flex justify-between items-center sticky top-0 py-4 px-2 ${
-                darkMode ? "bg-gray-800" : `bg-${lightModeSidebarColor}`
-              }`}
-            >
+            <div className="flex justify-between items-center p-4">
               <a
                 href="/dashboard"
                 alt="LOGO"
@@ -156,34 +152,29 @@ function SideBar() {
               >
                 Twokey
               </a>
-              <img
-                src={Cross}
-                alt="X"
+              <IconButton
                 onClick={() => {
-                  setIsMenuOpen(!isMenuOpen);
+                  setIsMenuOpen(false); // Close the drawer
                 }}
-                className="h-6 w-6"
-              ></img>
+              >
+                <CloseIcon style={{ color: darkMode ? "white" : "black" }} />
+              </IconButton>
             </div>
-            <SideBarContents
-              setIsMenuOpen={setIsMenuOpen}
-              isMenuOpen={isMenuOpen}
-              darkMode={darkMode}
-            />
+
+            <SideBarContents darkMode={darkMode} />
             <div className="my-12"></div>
-          </div>
-          <div
-            className={`sticky bottom-0 ${
-              darkMode ? "bg-gray-800" : `bg-${lightModeSidebarColor}`
-            }`}
-          >
-            <footer className="w-full py-2 sticky bottom-0">
-              <span className="flex justify-between items-center">
+
+            {/* Profile and logout buttons */}
+            <footer
+              className={`relative w-full py-5 bottom-12 ${
+                darkMode ? "bg-black" : `bg-${lightModeSidebarColor}`
+              }`}
+            >
+              <span className="flex justify-between items-center px-4">
                 <a
                   href="/profile"
                   alt="Profile"
-                  className={` p-2 rounded-md  
-                  ${
+                  className={`p-2 rounded-md ${
                     darkMode
                       ? "text-gray-200 hover:bg-gray-700"
                       : "hover:bg-gray-100"
@@ -223,13 +214,13 @@ function SideBar() {
           width: { md: 224, lg: 240, xs: 72 },
           display: { md: "block", xs: "none" },
           flexShrink: 0,
-          backgroundColor: `${darkMode ? "#1f2937" : "white"}`,
+          backgroundColor: `${darkMode ? "#1f2937" : "#f7f7ff"}`,
 
           "& .MuiDrawer-paper": {
             width: { md: 224, lg: 240, xs: 72 },
             display: { md: "block", xs: "none" },
-            backgroundColor: `${darkMode ? "#1f2937" : "white"}`,
-            minHeight: "auto",
+            backgroundColor: `${darkMode ? "#1f2937" : "#f7f7ff"}`,
+            minHeight: "100vh",
             border: "none",
           },
           "& .MuiDrawer-paper::-webkit-scrollbar": {
@@ -337,6 +328,39 @@ function SideBarContents({ darkMode, isMenuOpen, setIsMenuOpen }) {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const listDepartments = async () => {
+      try {
+        let token = JSON.parse(secureLocalStorage.getItem("token"));
+        let cachedDepartments = JSON.parse(
+          secureLocalStorage.getItem("departments")
+        );
+
+        console.log(cachedDepartments);
+
+        if (cachedDepartments) {
+          setDepartments(cachedDepartments);
+        } else {
+          const response = await axios.get(
+            `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
+            {
+              headers: {
+                Authorization: `Bearer ${token.session.access_token}`,
+              },
+            }
+          );
+
+          const departmentsData = response.data;
+          secureLocalStorage.setItem(
+            "departments",
+            JSON.stringify(departmentsData)
+          );
+          setDepartments(departmentsData);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     listDepartments();
   }, []);
 
@@ -413,13 +437,9 @@ function SideBarContents({ darkMode, isMenuOpen, setIsMenuOpen }) {
                   ? ` ${
                       darkMode
                         ? "hover:bg-gray-700 bg-gray-600"
-                        : `dept-${index}`
+                        : `hover:bg-indigo-400 bg-indigo-300`
                     }`
-                  : `${
-                      darkMode
-                        ? "hover:bg-gray-700 text-gray-100"
-                        : `dept-hover-${index}`
-                    }`
+                  : `${darkMode ? "hover:bg-indigo-700 " : "hover:bg-gray-300"}`
               }`}
             >
               {departmentIcons[department.name]}
