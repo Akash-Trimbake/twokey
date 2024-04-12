@@ -28,37 +28,33 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div
-      className="bg-cover bg-[#FFFFFF]  rounded-md  " >
-      <section className="md:flex  m-auto md:w-[70%] md:mt-12 md:py-12 md:border-y-2 md:border-t-transparent ">
-        <div className=" items-center flex justify-end ">
-            <img className="opacity-50  md:w-[80%] w-[100%]" src={ForgotPasswordImage} alt="" />
+    <div className="bg-cover bg-[#FFFFFF] border-y-2 border-t-transparent  rounded-md  ">
+      <section className="lg:flex md:flex  m-auto lg:w-[70%] md:mt-12 md:py-12  md:border-t-transparent ">
+        <div className=" lg:w-1/2 flex justify-center items-center">
+          <img
+            className="opacity-50 w-full md:w-[80%]"
+            src={ForgotPasswordImage}
+            alt=""
+          />
         </div>
 
-        <div className="md:w-1/2 mt-6">
-          <form className="rounded-md md:flex ">
-            <div
-              className=" px-4  md:px-12 bg-[#FFFF] p-4 rounded-md 
-        flex flex-col border-y-2 sm:w-full  bg-slate-50"
-            >
-              <div>
-                <p className="text-3xl md:text-4xl text-black  font-bold">
-                  Forgot
-                 </p>
-                <p className="text-3xl md:text-4xl text-black  font-bold ">
-                Your Password
-                 </p>
-              </div>
+        <div className="lg:w-1/2 p-4 md:p-8 border-y-2 border-b-transparent rounded-md">
+          <form className="rounded-md">
+            <div className="mb-8">
+              <h1 className="text-3xl md:text-4xl text-center text-black font-semibold mb-2 ">
+                Find  Your  Account
+              </h1>
+
+             
+
               <InputLabel
-                className=" text-md text-black  text-left mb-2  mt-10 md:mt-16 font-bold"
+                className=" text-md text-black  text-left mb-2  mt-4 md:mt-6 font-bold"
                 htmlFor="email"
               >
-               <p className=" text-black text-[13px]">
-                  Enter the email address associated with
-                </p>
-                <p className=" text-black text-[13px]"> your account.</p>
-
-            
+                 <p className=" text-gray-700 mt-8   text-md text-left mb-1 ">
+                Email
+              </p>
+              
               </InputLabel>
               <span id="email" className="flex flex-row gap-2 rounded-md ">
                 <TextField
@@ -73,23 +69,22 @@ const ForgotPassword = () => {
                   autoFocus
                 />
               </span>
-
-              {loading ? (
-                <CircularProgress
-                  className="mt-8"
-                  style={{ color: "#000", height: 25, width: 25 }}
-                />
-              ) : (
-                <button
-                  onClick={sendPasswordResetRequest}
-                  className="w-full m-auto bg-blue-600 text-white py-1 px-10 text-center mt-8  md:mt-14 rounded-sm hover:bg-blue-500"
-                >
-                  <span className="font-semibold">Send</span>
-                </button>
-              )}
-              <div className="text-center text-[12px] p-2 text-gray-500 ">
-              </div>
+                <p className="text-[12px] p-1 px-2 ">You may receive SMS notifications from us for security and login purposes</p>
             </div>
+            {loading ? (
+              <CircularProgress
+                className="mt-8"
+                style={{ color: "#000", height: 25, width: 25 }}
+              />
+            ) : (
+              <button
+                onClick={sendPasswordResetRequest}
+                className="w-full m-auto bg-blue-600 text-white py-1 px-10 text-center mt-2  md:mt-4 rounded-sm hover:bg-blue-500"
+              >
+                <span className="font-semibold">Send</span>
+              </button>
+            )}
+            <div className="text-center text-[12px] p-2 text-gray-500 "></div>
           </form>
         </div>
       </section>
