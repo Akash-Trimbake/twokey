@@ -13,6 +13,11 @@ import SecureShare from "./SecureShare";
 import { useDarkMode } from "../context/darkModeContext";
 import PropTypes from "prop-types";
 import fileContext from "../context/fileContext";
+import Pagination from "@mui/material/Pagination";
+import PaginationItem from "@mui/material/PaginationItem";
+import Stack from "@mui/material/Stack";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -59,6 +64,8 @@ export default function DashboardTabs() {
   const context = useContext(fileContext);
   const { files, setFiles, filteredData, setFilteredData } = context;
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
 
   //   realtime supabase subscribe
   // useEffect(() => {
@@ -80,6 +87,13 @@ export default function DashboardTabs() {
   //     supabase.removeChannel(channel);
   //   };
   // }, []);
+  useEffect(() => {
+    fetchFiles();
+  }, [value, currentPage]);
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value); // Update currentPage when pagination changes
+  };
 
   const handleTabChange = (event) => {
     setValue(event.target.value);
@@ -91,30 +105,29 @@ export default function DashboardTabs() {
 
   const fetchFiles = async () => {
     try {
+      setLoading(true); // Set loading state to true when fetching data
+
       let token = JSON.parse(secureLocalStorage.getItem("token"));
       let url;
 
-      // Determine the URL based on the selected tab
       switch (value) {
         case 0:
-          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files/?recs=25`;
+          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?p=${currentPage}`;
           break;
         case 1:
-          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=shared`;
+          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=shared&p=${currentPage}`;
           break;
         case 2:
-          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=received`;
+          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=received&p=${currentPage}`;
           break;
         case 3:
-          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=owned`;
+          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=owned&p=${currentPage}`;
           break;
-
         default:
           url = "";
           break;
       }
 
-      // Check if the URL is empty before making the request
       if (url) {
         const getFiles = await axios.get(url, {
           headers: {
@@ -124,91 +137,69 @@ export default function DashboardTabs() {
 
         console.log(`dashboard Tabs`, getFiles.data);
         setFiles(getFiles.data);
+        setTotalPages(Math.ceil(getFiles.headers.count / 25));
 
         const cacheKey = "recentFilesCache";
 
-        // Check if recent files data is available in localStorage
-        const cachedRecentFiles = secureLocalStorage.getItem(cacheKey);
-
-        if (cachedRecentFiles) {
-          // console.log(
-          //   "Using cached recent files:",
-          //   JSON.parse(cachedRecentFiles)
-          // );
-          setFilteredData(JSON.parse(cachedRecentFiles));
-          setLoading(false);
-        }
-
-        if (getFiles) {
-          const mappedFiles = getFiles.data.map((file) => {
-            // destucture and extract dept name of every file
-            try {
-              const [{ depts }, ...extra] = file.file_info;
-              const [{ name }, ...more] = depts;
-              file.department = name;
-            } catch (err) {
-              // if department {depts:[]} is empty
-              // console.log(err);
-              file.department = "";
-            }
-            // console.log("department : ", file.department);
-
-            return {
-              id: file.id,
-              name: file.name.substring(0, 80),
-              profilePic: file.profile_pic,
-              size: formatFileSize(file.metadata.size),
-              dept: file.department,
-              owner: file.owner_email,
-              mimetype: file.metadata.mimetype,
-              status: "Team",
-              security: "Enhanced",
-              color: file.file_info[0]?.depts[0]?.metadata?.bg,
-              lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
-                "en-IN",
-                {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                  hour: "numeric",
-                  minute: "numeric",
-                  hour12: true,
-                }
-              ),
-            };
-          });
-
-          // Sort the mappedFiles array based on the lastUpdate property
-          mappedFiles.sort((a, b) => {
-            return new Date(b.lastUpdate) - new Date(a.lastUpdate);
-          });
-
-          // Replace the cached recent files data with the new data
-          secureLocalStorage.setItem(cacheKey, JSON.stringify(mappedFiles));
-
-          // Update the state with the new data
-          // setFilteredData(mappedFiles);
-          if (location.pathname !== "/dashboard") {
-            // If location is other than "dashboard", send only the first 5 items
-            setFilteredData(mappedFiles.slice(0, 5));
-          } else {
-            // If location is "dashboard", send all filtered data
-            setFilteredData(mappedFiles);
+        const mappedFiles = getFiles.data.map((file) => {
+          try {
+            const [{ depts }, ...extra] = file.file_info;
+            const [{ name }, ...more] = depts;
+            file.department = name;
+          } catch (err) {
+            file.department = "";
           }
-          setLoading(false);
+
+          return {
+            id: file.id,
+            name: file.name.substring(0, 80),
+            profilePic: file.profile_pic,
+            size: formatFileSize(file.metadata.size),
+            dept: file.department,
+            owner: file.owner_email,
+            mimetype: file.metadata.mimetype,
+            status: "Team",
+            security: "Enhanced",
+            color: file.file_info[0]?.depts[0]?.metadata?.bg,
+            lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
+              "en-IN",
+              {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+                hour: "numeric",
+                minute: "numeric",
+                hour12: true,
+              }
+            ),
+          };
+        });
+
+        mappedFiles.sort((a, b) => {
+          return new Date(b.lastUpdate) - new Date(a.lastUpdate);
+        });
+
+        secureLocalStorage.setItem(cacheKey, JSON.stringify(mappedFiles));
+
+        if (location.pathname !== "/dashboard") {
+          setFilteredData(mappedFiles.slice(0, 5));
+        } else {
+          setFilteredData(mappedFiles);
         }
+
+        setLoading(false); // Set loading state to false when data fetching is complete
       } else {
         console.log("URL is empty. Skipping request.");
       }
     } catch (error) {
       console.log(error);
+      setLoading(false); // Set loading state to false if an error occurs
     }
   };
 
   const handleChange = (event, newValue) => {
-    // Reset logs state to null when changing tabs
-    // setLogs(null);
     setValue(newValue);
+    setCurrentPage(1); // Reset currentPage when changing tabs
   };
 
   return (
@@ -284,6 +275,26 @@ export default function DashboardTabs() {
           <RecentFiles filteredData={filteredData} loading={loading} />
         </CustomTabPanel>
       </Box>
+
+      {files.length ? (
+        <div className="flex justify-center items-center my-4">
+          <Stack spacing={2}>
+            <Pagination
+              count={totalPages} // Assuming there are 10 pages
+              page={currentPage}
+              onChange={handlePageChange}
+              renderItem={(item) => (
+                <PaginationItem
+                  slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }}
+                  {...item}
+                />
+              )}
+            />
+          </Stack>
+        </div>
+      ) : (
+        " "
+      )}
     </div>
   );
 }
